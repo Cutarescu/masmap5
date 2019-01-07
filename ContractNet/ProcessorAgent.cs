@@ -39,13 +39,16 @@ namespace ContractNet
                         int results = 0;
                         if (capacity < inputArray.Length)
                         {
+                            //send extra elements & Task to dispatcher
+                            int[] extraWorkLoad = inputArray.Where((source, index) => index >= capacity).ToArray();
+                            Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Extra-work]", taskName, Utils.ParseArrayToString(extraWorkLoad)));
+
                             this.workLoad += capacity; 
                             results = doTheWork(inputArray, capacity);
                             this.workLoad -= capacity;
-                            //remove elements which was processed
-                            inputArray = inputArray.Where((source, index) => index >= capacity).ToArray();
+
                             //send TasksManagement result, Task, noOfSubtasks
-                            //send Task&elements to dispatcher
+                            //Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 0));
                         }
                         else
                         {
@@ -59,13 +62,13 @@ namespace ContractNet
                     else
                     {
                         //send [Extra-work], Task&elements to dispatcher
-
+                        Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Extra-work]", taskName, Utils.ParseArrayToString(inputArray)));
                     }
 
                     break;
 
                 case "[Check-load]":
-                    //send [Capacity], Task&elements to dispatcher
+                    Send("dispatcherAgent", string.Format("{0} {1}", "[Capacity]", (capacity > 0 ? capacity : 0) ));
                     break;
 
             }

@@ -6,6 +6,7 @@ namespace ContractNet
     public class Utils
     {
         public static int defaultMaxWorkload = 10;
+        public static int helperAgentWorkload = 2;
 
         public static int Delay = 100;
         public static int NoOfProcessorAgent = 1;

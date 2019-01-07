@@ -25,7 +25,11 @@ namespace ContractNet
             var distributorAgent = new DistributorAgent();
             env.Add(distributorAgent, "distributorAgent");
             distributorAgent.Start();
-            //Thread.Sleep(100);
+            /*
+            var dispatcherAgent = new DispatcherAgent();
+            env.Add(dispatcherAgent, "dispatcherAgent");
+            dispatcherAgent.Start();
+            //Thread.Sleep(100);*/
 
             env.WaitAll();
         }
