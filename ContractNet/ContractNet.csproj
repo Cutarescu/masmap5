@@ -53,7 +53,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task.cs" />
-    <Compile Include="TasksManagement.cs" />
+    <Compile Include="TasksManagementAgent.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@ using ActressMas;
 
 namespace ContractNet
 {
-    class TasksManagement : Agent
+    class TasksManagementAgent : Agent
     {
         Dictionary<string, Task> taskStatus = new Dictionary<string, Task>();
 
@@ -37,7 +37,7 @@ namespace ContractNet
             //# else is in progress
             if (taskStatus[taskName].noOfSubtasks == 0)
             {
-                Console.WriteLine("{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
+                Console.WriteLine("--{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
             } else
             {
                 //1 subtask is finish
@@ -46,7 +46,7 @@ namespace ContractNet
                     taskStatus[taskName].noOfSubtasks--;
                     if (taskStatus[taskName].noOfSubtasks == 0)
                     {
-                        Console.WriteLine("{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
+                        Console.WriteLine("**{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
                     }
                 }
             }

@@ -18,7 +18,7 @@ namespace ContractNet
             }
             Thread.Sleep(100);
 
-            var tasksManagement = new TasksManagement();
+            var tasksManagement = new TasksManagementAgent();
             env.Add(tasksManagement, "tasksManagement");
             tasksManagement.Start();
             Thread.Sleep(100);
