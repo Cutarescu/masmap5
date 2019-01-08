@@ -50,8 +50,6 @@
     <Compile Include="DispatcherAgent.cs" />
     <Compile Include="HelperAgents.cs" />
     <Compile Include="ProcessorAgent.cs" />
-    <Compile Include="Initiator.cs" />
-    <Compile Include="Participant.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task.cs" />
@@ -60,6 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="database_mix.txt" />
+    <Content Include="database_small.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

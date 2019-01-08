@@ -1,12 +1,14 @@
 ﻿using ActressMas;
 using System;
+using System.IO;
+using System.Threading;
 
 namespace ContractNet
 {
     public class DistributorAgent : Agent
     {
         int[][] inputData = new int[2][];
-
+        int taskCount = 0;
         public DistributorAgent(int[][] inputData)
         {
             this.inputData = inputData;
@@ -20,9 +22,19 @@ namespace ContractNet
 
         public override void Setup()
         {
-            string inputArray = Utils.ParseArrayToString(this.inputData[1]); 
-            Console.WriteLine("[{0}]: Input Data = {1}", this.Name, inputArray);
-            Send("ProcessorAgent1", string.Format("[Work] [Task1] {0}", inputArray) );
+            while (true)
+            {
+                String file = "database_small.txt";
+                StreamReader dataStream = new StreamReader(file);
+                string datasample;
+                while ((datasample = dataStream.ReadLine()) != null)
+                {
+                    Console.WriteLine("[{0}]: Input Data = {1}", this.Name, datasample);
+                    Send(Utils.processorAgents[Utils.RandNoGen.Next(Utils.processorAgents.Count)], string.Format("[Work] [Task{0}] {1}", taskCount, datasample));
+                    taskCount++;
+                }
+            }
+
         }
 
         public override void Act(Message message)

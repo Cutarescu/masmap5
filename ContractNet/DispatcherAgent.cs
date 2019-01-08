@@ -7,13 +7,11 @@ namespace ContractNet
 {
     public class DispatcherAgent : Agent
     {
-        private int currentCount = 0;
-        private int[] currentWorkload;
-        private List<string> respondingAgents = new List<string>();
-        private List<int> agentsCapacity = new List<int>();
 
-        //Dictionary<string, int[]> taskAssociatedWorkload = new Dictionary<string, int[]>();
-        //Dictionary<string, int> taskResponseCount = new Dictionary<string, int>();
+        Dictionary<string, int[]> taskAssociatedWorkload = new Dictionary<string, int[]>();
+        Dictionary<string, int> taskResponseCount = new Dictionary<string, int>();
+        Dictionary<string, List<string>> taskRespondingAgents = new Dictionary<string, List<string>>();
+        Dictionary<string, List<int>> taskAgentsCapacity = new Dictionary<string, List<int>>();
 
         public override void Act(Message message)
         {
@@ -26,25 +24,28 @@ namespace ContractNet
             switch (action)
             {
                 case "[Extra-work]":
-                    //taskAssociatedWorkload.Add(taskName, Utils.ParseStringToArray(parameters));
-                    currentWorkload = Utils.ParseStringToArray(parameters);
-                    Broadcast(Utils.processorAgents, string.Format("[Check-load] {0}", taskName));
+                    taskAssociatedWorkload[taskName] = Utils.ParseStringToArray(parameters);
+                    taskResponseCount[taskName] = 0;
+                    taskAgentsCapacity[taskName] = new List<int>();
+                    taskRespondingAgents[taskName] = new List<string>();
+                    List<string> otherProcessorAgents = Utils.processorAgents.Where(agentName => agentName != message.Sender).ToList();
+                    Broadcast( otherProcessorAgents, string.Format("[Check-load] {0}", taskName));
                     break;
 
                 case "[Capacity]":
-                    addResponse(message.Sender, Convert.ToInt32(parameters));
-                    if (currentCount == Utils.NoOfProcessorAgent)
+                    addResponse(message.Sender, Convert.ToInt32(parameters), taskName);
+                    if (taskResponseCount[taskName] == Utils.NoOfProcessorAgent - 1)
                     {
-                        if (agentsCapacity.Sum() != 0)
+                        if (taskAgentsCapacity[taskName].Sum() != 0)
                         {
                             for (int i = 0; i < Utils.NoOfProcessorAgent; i++){
-                                string maxAgent = respondingAgents[i];
-                                int capacity = agentsCapacity[i];
-                                if(capacity > 0 && currentWorkload.Length > 0)
+                                string maxAgent = taskRespondingAgents[taskName][i];
+                                int capacity = taskAgentsCapacity[taskName][i];
+                                if(capacity > 0 && taskAssociatedWorkload[taskName].Length > 0)
                                 {
-                                    int[] workLoad = currentWorkload.Where((source, index) => index < capacity).ToArray();
+                                    int[] workLoad = taskAssociatedWorkload[taskName].Where((source, index) => index < capacity).ToArray();
                                     Send("ProcessorAgent1", string.Format("[Work] {0} {1}", taskName, Utils.ParseArrayToString(workLoad)));
-                                    currentWorkload = currentWorkload.SkipWhile((source, index) => index < capacity).ToArray();
+                                    taskAssociatedWorkload[taskName] = taskAssociatedWorkload[taskName].SkipWhile((source, index) => index < capacity).ToArray();
                                 }
                                 else
                                 {
@@ -52,10 +53,12 @@ namespace ContractNet
                                 }
                             }
                             computeWithHelpers(taskName);
+                            clearMaps(taskName);
                         }
                         else
                         {
                             computeWithHelpers(taskName);
+                            clearMaps(taskName);
                         }
                     }
                     break;
@@ -63,30 +66,38 @@ namespace ContractNet
 
         }
 
+        private void clearMaps(string taskName)
+        {
+            taskAssociatedWorkload.Remove(taskName);
+            taskResponseCount.Remove(taskName);
+            taskRespondingAgents.Remove(taskName);
+            taskAgentsCapacity.Remove(taskName);
+        }
+
         private void computeWithHelpers(string taskName)
         {
-            while (currentWorkload.Length > 0)
+            while (taskAssociatedWorkload[taskName].Length > 0)
             {
-                int[] workLoad = currentWorkload.Where((source, index) => index < Utils.helperAgentWorkload).ToArray();
+                int[] workLoad = taskAssociatedWorkload[taskName].Where((source, index) => index < Utils.helperAgentWorkload).ToArray();
                 var helperAgent = new HelperAgents(workLoad, taskName);
                 this.Environment.Add(helperAgent, "helperAgent");
                 helperAgent.Start();
-                currentWorkload = currentWorkload.SkipWhile((source, index) => index < Utils.helperAgentWorkload).ToArray();
+                taskAssociatedWorkload[taskName] = taskAssociatedWorkload[taskName].SkipWhile((source, index) => index < Utils.helperAgentWorkload).ToArray();
             }
         }
 
-        private void addResponse(string agentName, int capacity)
+        private void addResponse(string agentName, int capacity, string taskName)
         {
             int insertIndex = 0;
-            for(int i = 0; i < currentCount; i++)
+            for(int i = 0; i < taskResponseCount[taskName]; i++)
             {
                 insertIndex = i;
-                if (capacity > agentsCapacity[i])
+                if (capacity > taskAgentsCapacity[taskName][i])
                     break;
             }
-            agentsCapacity.Insert(insertIndex, capacity);
-            respondingAgents.Insert(insertIndex, agentName);
-            currentCount++;
+            taskAgentsCapacity[taskName].Insert(insertIndex, capacity);
+            taskRespondingAgents[taskName].Insert(insertIndex, agentName);
+            taskResponseCount[taskName]++;
         }
 
     }

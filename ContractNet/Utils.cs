@@ -10,7 +10,7 @@ namespace ContractNet
         public static int helperAgentWorkload = 2;
 
         public static int Delay = 100;
-        public static int NoOfProcessorAgent = 1;
+        public static int NoOfProcessorAgent = 5;
         public static int NoOfHelperAgents = 1;
 
         public static int randomMinWorkload = 5;
