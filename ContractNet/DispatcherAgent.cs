@@ -28,12 +28,11 @@ namespace ContractNet
                 case "[Extra-work]":
                     //taskAssociatedWorkload.Add(taskName, Utils.ParseStringToArray(parameters));
                     currentWorkload = Utils.ParseStringToArray(parameters);
-                    BroadcastAll("[Check-load]");
+                    Broadcast(Utils.processorAgents, string.Format("[Check-load] {0}", taskName));
                     break;
 
                 case "[Capacity]":
-                    // in case a processor sends back a [Check-load] response, the capacity will be the second parameter ('taskname')
-                    addResponse(message.Sender, Convert.ToInt32(taskName));
+                    addResponse(message.Sender, Convert.ToInt32(parameters));
                     if (currentCount == Utils.NoOfProcessorAgent)
                     {
                         if (agentsCapacity.Sum() != 0)
@@ -44,7 +43,7 @@ namespace ContractNet
                                 if(capacity > 0 && currentWorkload.Length > 0)
                                 {
                                     int[] workLoad = currentWorkload.Where((source, index) => index < capacity).ToArray();
-                                    Send("ProcessorAgent1", string.Format("[Work] {0} {1}", taskName, workLoad));
+                                    Send("ProcessorAgent1", string.Format("[Work] {0} {1}", taskName, Utils.ParseArrayToString(workLoad)));
                                     currentWorkload = currentWorkload.SkipWhile((source, index) => index < capacity).ToArray();
                                 }
                                 else

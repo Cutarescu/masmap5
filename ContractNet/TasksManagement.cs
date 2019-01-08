@@ -13,10 +13,12 @@ namespace ContractNet
 
         public override void Act(Message message)
         {
+
             //parse message: result, Task, noOfSubtasks
             string result, parameters, taskName, noOfSubtasks;
             Utils.ParseMessageTasksManagement(message.Content, out result, out taskName, out noOfSubtasks, out parameters);
 
+            Console.WriteLine("[{0}]: received from [{1}] result {2}, task name= \'{3}\' and subtasks {4}", this.Name,  message.Sender, result, taskName, noOfSubtasks);
             
             int status = Int32.Parse(noOfSubtasks);
             int intResult = Int32.Parse(result);
@@ -35,7 +37,7 @@ namespace ContractNet
             //# else is in progress
             if (taskStatus[taskName].noOfSubtasks == 0)
             {
-                Console.WriteLine("{0} is finish with the result: {1}", taskName, result);
+                Console.WriteLine("{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
             } else
             {
                 //1 subtask is finish
@@ -44,7 +46,7 @@ namespace ContractNet
                     taskStatus[taskName].noOfSubtasks--;
                     if (taskStatus[taskName].noOfSubtasks == 0)
                     {
-                        Console.WriteLine("{0} is finish with the result: {1}", taskName, result);
+                        Console.WriteLine("{0} is finish with the result: {1}", taskName, taskStatus[taskName].result);
                     }
                 }
             }

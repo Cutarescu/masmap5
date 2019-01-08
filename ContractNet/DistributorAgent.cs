@@ -5,20 +5,22 @@ namespace ContractNet
 {
     public class DistributorAgent : Agent
     {
-        int[] inputData = {5,3,5,8};
+        int[][] inputData = new int[2][];
 
-        public DistributorAgent(int[] inputData)
+        public DistributorAgent(int[][] inputData)
         {
             this.inputData = inputData;
         }
 
         public DistributorAgent()
         {
+            inputData[0] = new int[] { 5, 3, 5, 8 };
+            inputData[1] = new int[] { 5, 3, 2, 5, 3, 2, 5, 3, 2, 5, 3, 2, 5, 3, 2, 5, 3, 2, 5, 3, 2, 5, 3, 2 };
         }
 
         public override void Setup()
         {
-            string inputArray = Utils.ParseArrayToString(this.inputData); 
+            string inputArray = Utils.ParseArrayToString(this.inputData[1]); 
             Console.WriteLine("[{0}]: Input Data = {1}", this.Name, inputArray);
             Send("ProcessorAgent1", string.Format("[Work] [Task1] {0}", inputArray) );
         }

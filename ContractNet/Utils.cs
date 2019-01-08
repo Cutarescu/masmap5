@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ContractNet
 {
@@ -14,6 +15,8 @@ namespace ContractNet
 
         public static int randomMinWorkload = 5;
         public static int randomMaxWorkload = 15;
+
+        public static List<string> processorAgents = new List<string>();
 
         public static Random RandNoGen = new Random();
 

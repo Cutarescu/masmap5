@@ -13,6 +13,7 @@ namespace ContractNet
                 int agentWorkload = Utils.randomMinWorkload + Utils.RandNoGen.Next(Utils.randomMaxWorkload - Utils.randomMinWorkload);
                 var processorAgent = new ProcessorAgent(agentWorkload);
                 env.Add(processorAgent, string.Format("ProcessorAgent{0}", i));
+                Utils.processorAgents.Add(string.Format("ProcessorAgent{0}", i));
                 processorAgent.Start();
             }
             Thread.Sleep(100);
@@ -25,11 +26,11 @@ namespace ContractNet
             var distributorAgent = new DistributorAgent();
             env.Add(distributorAgent, "distributorAgent");
             distributorAgent.Start();
-            /*
+
             var dispatcherAgent = new DispatcherAgent();
             env.Add(dispatcherAgent, "dispatcherAgent");
             dispatcherAgent.Start();
-            //Thread.Sleep(100);*/
+            //Thread.Sleep(100);
 
             env.WaitAll();
         }

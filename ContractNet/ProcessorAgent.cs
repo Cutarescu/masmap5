@@ -48,7 +48,7 @@ namespace ContractNet
                             this.workLoad -= capacity;
 
                             //send TasksManagement result, Task, noOfSubtasks
-                            //Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 0));
+                            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 1));
                         }
                         else
                         {
@@ -68,7 +68,7 @@ namespace ContractNet
                     break;
 
                 case "[Check-load]":
-                    Send("dispatcherAgent", string.Format("{0} {1}", "[Capacity]", (capacity > 0 ? capacity : 0) ));
+                    Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Capacity]", taskName, (capacity > 0 ? capacity : 0) ));
                     break;
 
             }
