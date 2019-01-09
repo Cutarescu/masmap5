@@ -9,21 +9,21 @@ namespace ContractNet
     class Task
     {
         public string name;
-        public int noOfSubtasks;
         public int result;
+        public double partWorkDone;
 
         public Task()
         {
             name = "default";
-            noOfSubtasks = 0;
             result = 0;
+            partWorkDone = 0;
         }
 
-        public Task(String name, int noOfSubtasks, int result)
+        public Task(String name, int result, double partWorkDone)
         {
             this.name = name;
-            this.noOfSubtasks = noOfSubtasks;
             this.result = result;
+            this.partWorkDone = partWorkDone;
         }
     }
 }

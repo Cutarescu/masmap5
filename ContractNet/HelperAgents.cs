@@ -7,20 +7,25 @@ namespace ContractNet
     {
         private int[] workLoad;
         private string taskName;
+        private double valueOfPartWork;
 
-        public HelperAgents(int[] workLoad, string taskName)
+        public HelperAgents(int[] workLoad, string taskName, double valueOfPartWork)
         {
             this.workLoad = workLoad;
             this.taskName = taskName;
+            this.valueOfPartWork = valueOfPartWork;
+
         }
 
         public override void Setup()
         {
-            Console.WriteLine("Create [{0}]:", this.Name);
+            Console.WriteLine("Create [{0}] with parameters : taskName={1} partToWork={2} elements=[{3}]", this.Name, taskName, valueOfPartWork, Utils.ParseArrayToString(workLoad));
 
             int results = doTheWork(workLoad, workLoad.Length);
 
-            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 0));
+            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, valueOfPartWork));
+
+            this.Stop();
 
         }
 

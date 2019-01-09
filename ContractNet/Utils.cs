@@ -40,7 +40,7 @@ namespace ContractNet
             }
         }
 
-        public static void ParseMessageWithActionTaskname(string content, out string action, out string taskName, out string parameters)
+        public static void ParseMessageDispatcher(string content, out string action, out string taskName, out string parameters)
         {
             string[] t = content.Split();
 
@@ -51,6 +51,23 @@ namespace ContractNet
             if (t.Length > 1)
             {
                 for (int i = 2; i < t.Length - 1; i++)
+                    parameters += t[i] + " ";
+                parameters += t[t.Length - 1];
+            }
+        }
+
+        public static void ParseMessageProcessorAgent(string content, out string action, out string taskName, out string valueOfPartWork, out string parameters)
+        {
+            string[] t = content.Split();
+
+            action = t[0];
+            taskName = t[1];
+            valueOfPartWork = t[2];
+
+            parameters = "";
+            if (t.Length > 1)
+            {
+                for (int i = 3; i < t.Length - 1; i++)
                     parameters += t[i] + " ";
                 parameters += t[t.Length - 1];
             }
@@ -87,6 +104,11 @@ namespace ContractNet
         public static string ParseArrayToString(int[] inputData)
         {
             return string.Join(",", inputData);
+        }
+
+        public static double GetHowMuchIWork(double workRemains, int numberOfWorkers)
+        {
+            return workRemains/numberOfWorkers;
         }
 
 

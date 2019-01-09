@@ -21,15 +21,15 @@ namespace ContractNet
 
         public override void Act(Message message)
         {
-            string action, parameters, taskName;
-            Utils.ParseMessageWithActionTaskname(message.Content, out action, out taskName, out parameters);
-
-            Console.WriteLine("[{0}]: received {1} from [{2}] parameters: {3}, task name= {4}.", this.Name, action, message.Sender, parameters, taskName);
+            string action, parameters, taskName, valueOfPartWork;
+            Utils.ParseMessageProcessorAgent(message.Content, out action, out taskName, out valueOfPartWork, out parameters);
 
             int capacity = this.maxWorkLoad - this.workLoad;
             switch (action)
             {
                 case "[Work]":
+                    Console.WriteLine("[{0}]: received {1} from [{2}] task name = {3}, valueOfPartWork =  {4}, parameters: {5}.", this.Name, action, message.Sender, taskName, valueOfPartWork, parameters);
+
                     int[] inputArray = Utils.ParseStringToArray(parameters);
                     // check if can do the work
                     if (capacity > 0)
@@ -39,16 +39,17 @@ namespace ContractNet
                         int results = 0;
                         if (capacity < inputArray.Length)
                         {
+                            double halfOfPartWork = Utils.GetHowMuchIWork(Convert.ToDouble(valueOfPartWork), 2);
                             //send extra elements & Task to dispatcher
                             int[] extraWorkLoad = inputArray.Where((source, index) => index >= capacity).ToArray();
-                            Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Extra-work]", taskName, Utils.ParseArrayToString(extraWorkLoad)));
+                            Send("dispatcherAgent", string.Format("{0} {1} {2} {3}", "[Extra-work]", taskName, halfOfPartWork, Utils.ParseArrayToString(extraWorkLoad)));
 
                             this.workLoad += capacity; 
                             results = doTheWork(inputArray, capacity);
                             this.workLoad -= capacity;
 
                             //send TasksManagement result, Task, noOfSubtasks
-                            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 1));
+                            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, halfOfPartWork));
                         }
                         else
                         {
@@ -56,19 +57,20 @@ namespace ContractNet
                             results = doTheWork(inputArray, inputArray.Length);
                             this.workLoad -= inputArray.Length;
                             //send TasksManagement result, Task, noOfSubtasks
-                            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, 0));
+                            Send("tasksManagement", string.Format("{0} {1} {2}", results, taskName, valueOfPartWork));
                         }
                     }
                     else
                     {
                         //send [Extra-work], Task&elements to dispatcher
-                        Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Extra-work]", taskName, Utils.ParseArrayToString(inputArray)));
+                        Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Extra-work]", taskName, valueOfPartWork, Utils.ParseArrayToString(inputArray)));
                     }
 
                     break;
 
                 case "[Check-load]":
-                    Send("dispatcherAgent", string.Format("{0} {1} {2}", "[Capacity]", taskName, (capacity > 0 ? capacity : 0) ));
+                    Console.WriteLine("[{0}]: received {1} from [{2}] task name = {3}.", this.Name, action, message.Sender, taskName);
+                    Send("dispatcherAgent", string.Format("{0} {1} {2} {3}", "[Capacity]", taskName, valueOfPartWork, (capacity > 0 ? capacity : 0) ));
                     break;
 
             }
